@@ -1,0 +1,78 @@
+---
+id: 6345
+title: 'Xamarin Forms for Windows Phone devs &ndash; A brief introduction'
+date: 2015-01-08T15:00:00+00:00
+author: qmatteoq
+layout: post
+guid: http://wp.qmatteoq.com/?p=6345
+permalink: /first-steps-with-xamarin-forms-a-brief-introduction/
+categories:
+  - wpdev
+  - Xamarin
+tags:
+  - Windows Phone
+  - Xamarin
+---
+Mobile cross platform development is one of the hottest topics nowadays. The market offers to consumers three major mobile platforms (iOS, Android and Windows Phone), each of them based on its own technologies, patterns and tools. iOS is based on Objective-C or Swift as programming language and uses XCode as development tool; Android is based on Java as programming language and uses Eclipse as development tool (even if there are many other alternatives); in the end, Windows Phone is based on C#, VB.NET or HTML / JS and uses Visual Studio as development tool.
+
+Consequently, if you’re a mobile company and you want to create applications that target all of them, you’ll need three dedicated teams, each of them with their own skills and knowledge. Unfortunately, not all the companies can afford such an investment, especially if mobile development isn’t the core business: for example, you’re a web agency that would like to offers to their customers, other than a website, also a companion application; or maybe you’re an enterprise company and you want to provide mobile tools to your employees, regardless of the mobile device they have.
+
+Consequently, many software companies have tried to find new approaches to allow developers to create applications that are able to share as much as code as possible between all the platforms, so that the development teams don’t need to create three completely different applications from scratch. Currently, there are two approaches to achieve this goal:
+
+  * **Web based apps:** this approach is based on HTML and Javascript technologies, which are executed on the phone using a WebView control that is embedded into the app. Thanks to tools like <a href="http://cordova.apache.org/" target="_blank">Apache Cordova</a> (previously known as PhoneGap), you’re able to access to some of the native features of the platform (like storage, sensors, etc.) by using Javascript APIs. This approach is based on the principle “write once and run everywhere”: you’re going to create a single application, that will run on every platform without any change. 
+      * **Xamarin:** this approach allows developers to use Microsoft technologies and tools (C#, Visual Studio, the .NET Framework) to create native application for all the platforms. We’re going to analyze better in this post how it works and which are the differences compared to web based apps.</ul> 
+    ### What is Xamarin?
+    
+    Xamarin is a company founded by Miguel De Icaza, which gathered together all the teams that created Mono, MonoTouch and Mono for Android, which are the open source implementations of the .NET framework that can run on platforms different than Windows. With Xamarin tools, you’ll be able to create applications for iOS and Android by using C# as a programming language and Visual Studio (or Xamarin Studio) as a development environment. All the iOS and Android APIs have been translated into C# classes and objects which, under the hood, are compiled into native code. Which are the main advantages of using Xamarin instead of a web approach based on tools like Apache Cordova?
+    
+      * **Performance**: the biggest downside of web based apps is that are executed in a WebView, so they don’t offer the same performance of a native app. In addition, the application’s performances change a lot based on the operating system’s version, since typically every new release improves the browser’s performance and compatibility with the latest web technologies. 
+          * **Design**: the “write once and run everywhere” approach is great because it minimizes the amount of work for developers, but it reduces the quality of the design and the user experience. Every platform has its own visual style and guidelines, so it’s impossible to create an application with a common visual layout that looks good on each platform. 
+              * **Features:** since web apps are based on the “write once and run everywhere” approach, tools like Cordova are able to offer to developers only a minimum set of APIs that are in common between every platform. You won’t be able to use features that, instead, are specific for each platform, like live tiles on Windows Phone or background activities in Android.</ul> 
+            ### 
+            
+            ### What is not Xamarin?
+            
+            The most important concept to understand is that Xamarin isn’t a “write once and run everywhere” platform. When you develop web apps, you can virtually know nothing about the technical details of the different mobile platforms: creating a web app is just like creating a website, with the only exception that you’ll be able to interact with the hardware thanks to libraries like Cordova. Xamarin, instead, requires a good knowledge of each platform and how the main features are implemented, like the navigation framework, the application’s lifecycle, the design language, etc. A good example is how the design of the application’s pages is defined: you’ll have to design three different interfaces using the specific platform tools, like XAML for Windows Phone or the XCode designer for iOS.
+            
+            Consequently, Xamarin isn’t a technology to create mobile apps for each platform without having to learn the basics like with web apps, but it will help you to:
+            
+              * **Reuse your business logic**: by using technologies like Portable Class Libraries (PCL), you’ll be able to write the logic just once (like services to interact with a database or a REST service) and to reuse it in every platform. 
+                  * **Reuse your existing skills**: you’ll still have to learn the basic concepts of developing apps for iOS and Android, but you won’t have to learn a new programming language in the process. You’ll be able to reuse your existing .NET and C# knowledge.</ul> 
+                Another important consideration to do is that Xamarin isn’t the best cross platform solution for everyone: if you’re already a Microsoft developer, it’s for sure the best technology out there to reuse your skills to create applications for all the main mobile platforms. However, if you’re an iOS or Android developer is definitely a good investment, but it will require you more time to assimilate it, since you’ll have to learn a new programming language in the process: C#.
+                
+                In the end, Xamarin isn’t very cheap, so it’s more suitable for professionals and big development teams. Currently, there are three available plans:
+                
+                  * **Starter**, which is free but it has many limitations. It doesn’t offer integration with Visual Studio, it doesn’t support Xamarin Forms, it has a limitation in the size of the app that you can create, etc. 
+                      * **Indie**, which costs 25 $ per month and it’s dedicated to indie developers. The biggest downside of this plan is that it doesn’t support Visual Studio integration. 
+                          * **Business**, which is the most popular plan. It costs 83 $ per month and it includes all the available features, from Xamarin Forms to Visual Studio integration.</ul> 
+                        Xamarin offers also an Enterprise plan that includes the same tools of the Business plan, in addition to advanced services like One Business Day support, a dedicated Technical Account Manager, etc.
+                        
+                        However, during the recent <a href="http://channel9.msdn.com/Events/Visual-Studio/Connect-event-2014" target="_blank">Connect()</a> event by Microsoft, Xamarin has announced that in 2015 is going to release a new Starter edition, with less limitations and integrated with <a href="http://www.visualstudio.com/en-us/products/visual-studio-community-vs" target="_blank">Visual Studio 2013 Community</a>, the free Professional version recently released by Microsoft for independent developers and small companies.
+                        
+                        ### What is Xamarin Forms?
+                        
+                        We’ve learned that using Xamarin requires a good knowledge of each platform, especially when it comes to design the user interface and to manage the navigation. This way, we are able to create applications that follows the specific platform’s guidelines. However, this approach is very expensive for a single developer, since it requires to learn and master every design technology: Windows Phone is based on XAML, Android on its own XML dialect while iOS uses a visual tool called Interface Builder.
+                        
+                        Xamarin Forms is a recent technology created by Xamarin in order to partially solve this problem: it offers a new way to create the application’s interface by using the XAML language, which should be already familiar to Windows Phone and Windows developers. Xamarin Forms offers a set of controls (which are represented by a XML tag) that, at runtime, are converted into the most appropriate native control: this way, we’ll be able to define the user interface just once, but the application will continue to have the native look on each platform. For example, if you need to grab the input from the user, Xamarin Forms offers a control called **Entry**, which is rendered as a **TextBox** in Windows Phone, as an **EditText** in Android and as an **UITextField** in iOS.
+                        
+                        <img src="http://iosapi.xamarin.com/monodoc.ashx?link=source-id:1:Entry.TripleScreenShot.png" width="652" height="326" />
+                        
+                        With Xamarin Forms, the development approach is very similar to the Windows and Windows Phone one: every page is composed by a XAML file (which contains the layout definition) and a code behind file (which contains the code that interacts with the user interface). You have also access to all the most important XAML features, like binding, converters, styles, behaviors, etc. If you already have a good experience in developing Windows Store and Windows Phone apps like me, Xamarin Forms is for sure the easiest way to reuse your knowledge to create mobile applications for all the platforms.
+                        
+                        In the next posts we’ll see, in details, how to create an application using Xamarin Forms, with a strong focus on the MVVM pattern: since this pattern makes easier to separate the user interface from the logic, it will greatly help us to reuse the same code on all the platforms.
+                        
+                        ### What do you need to start with Xamarin Forms?
+                        
+                        The basic requirements to start with Xamarin Forms are the Xamarin tools, which can be downloaded from <http://www.xamarin.com>. Then, you have two ways to use it: with Xamarin Studio, which is the development environment created by Xamarin, or Visual Studio 2013. However, the second one is the only solution that can be used to create applications for all the platforms: Xamarin Studio, in fact, supports only Android and iOS, while with Visual Studio you’ll be able to create a project that targets also Windows Phone. However, Xamarin Studio, unlike Visual Studio 2013, is available also for OS X.
+                        
+                        If you want to build applications for iOS you’ll need also a Mac, since Windows doesn’t have the required runtime: however, Xamarin includes a tool called **Xamarin Build Host**, which can be installed and launched on a Mac that is in the same network of our Windows computer. Visual Studio will be able to connect to it and to use it to build the iOS application and, eventually, to deploy it on the emulator or on a phone that is connected to the Mac.
+                        
+                        The Android runtime, instead, can run just fine both on Windows and OS X, so there aren’t special requirements. The only problem you’ll have to deal with is the Android emulator: the native one created by Google is really bad, since it offers really poor performances. Consequently, many companies have created alternative emulators, with the goal to offer better performances and additional tools: Xamarin itself offers an emulator called Android Player, which can be downloaded from [https://xamarin.com/android-player](https://xamarin.com/android-player "https://xamarin.com/android-player"). Another good alternative is <a href="https://www.genymotion.com/" target="_blank">Genymotion</a>, which is free for personal use. The downside of these emulators is that they are based on VirtualBox, the virtualization technology by Oracle, which doesn’t play well with Hyper-V, which is the Microsoft virtualization technology used for the Windows Phone emulators. Consequently, you have two ways if you want to test your Xamarin Forms app both on Windows Phone and Android:
+                        
+                          * Use a real Android device and keep using the Windows Phone emulator. 
+                              * If you’re reading this post, you probably are a Windows or Windows Phone developer. Consequently, it’s very likely that you already have a Windows Phone device for testing, but not an Android one. Scott Hanselman explains <a href="http://www.hanselman.com/blog/SwitchEasilyBetweenVirtualBoxAndHyperVWithABCDEditBootEntryInWindows81.aspx" target="_blank">in this post</a> how to change your computer’s bootloader so that you can launch Windows with Hyper-V disabled, without having to completely uninstall it: this way, you’ll be able to launch the Android emulator and keep using a Windows Phone device for testing.</ul> 
+                            However, there’s another alternative: <a href="http://www.visualstudio.com/en-us/downloads/visual-studio-2015-downloads-vs.aspx" target="_blank">Visual Studio 2015 Preview</a>, in fact, includes a very fast Android emulator. Since it’s based on Hyper-V, it can run side by side with the Windows Phone emulator. The only downside of this approach is that you’ll need to use preview software: other than installing the Preview version of Visual Studio 2015, in fact, you’ll need also to switch to the Xamarin beta channel, since the current stable version supports only Visual Studio 2013. To do that, you’ll need to open Xamarin Studio or Visual Studio (after you’ve installed the Xamarin Tools) and, in the Settings, check for updates: by default, Xamarin is set to use the Stable channel, but you can switch to get updates from the beta or alpha ones.
+                            
+                            ### Wrapping up
+                            
+                            In this post we’ve seen what are Xamarin and Xamarin Forms and why it can be a great solution for Microsoft developers to create applications for all the mobile platforms. This post was just a theoretical introduction to this platform: in the next ones we’ll start to see some code and how to create our first cross platform app reusing the skills we’ve acquired by developing apps for Windows and Windows Phone.
