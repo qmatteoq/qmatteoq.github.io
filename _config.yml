@@ -12,7 +12,8 @@ cayman-blog:
 
 theme: # leave it empty
 
-gems: [jekyll-paginate]
+plugins:
+  - jekyll-paginate
 paginate: 5
 
 # social
