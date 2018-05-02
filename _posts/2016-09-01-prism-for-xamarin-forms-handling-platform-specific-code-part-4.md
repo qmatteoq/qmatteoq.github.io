@@ -194,11 +194,9 @@ In the end, in the **DetailPage.xaml** we have added a **ToolbarItem** control, 
 </ContentPage.ToolbarItems>
 ```
         
-<a href="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-47.png"><img title="Screenshot_2016-08-22-14-46-47" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="Screenshot_2016-08-22-14-46-47" src="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-47_thumb.png?resize=290%2C516" width="290" height="516"  data-recalc-dims="1" /></a>
+<img title="Screenshot_2016-08-22-14-46-47" src="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-47_thumb.png?resize=290%2C516"/>
 
-<a href="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-38.png"><img title="Screenshot_2016-08-22-14-46-38" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="Screenshot_2016-08-22-14-46-38" src="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-38_thumb.png?resize=290%2C516" width="290" height="516"  data-recalc-dims="1" /></a>
-        
-        
+<img title="Screenshot_2016-08-22-14-46-38" src="https://i2.wp.com/blog.qmatteoq.com/wp-content/uploads/2016/08/Screenshot_2016-08-22-14-46-38_thumb.png?resize=290%2C516" />
         
 Nothing special here: the control has a text and it’s connected through binding to the **ShareItemCommand** we have previously defined in the ViewModel. Now launch the application on an Android device or emulator, choose one TV Show and use the new share option we’ve just added: automagically, Android will show us the share chooser, which will allow the user to choose which target application will receive the image. As you can see, we didn’t have to register anything related to the **IShareService** in the **App** class: Prism did everything on its own. Of course, if we want to achieve the same result also when the app is running on iOS or on Windows 10, we need to create also an implementation of the **IShareService** interface in the other platform specific projects.
         
