@@ -8,7 +8,6 @@ layout: default
             <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
             in <span class="post-meta">{{ post.tags | array_to_sentence_string }}</span>
             <h2><a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h2>
-            {{ post.content }}
         </li>
     {% endfor %}
     </ul>
