@@ -138,7 +138,8 @@ As you can see, the class implements the **ShareShirt()** method by downloading 
         
 Thanks to Prism, that’s all we need to do. Now simply add, in the **DetailPageViewModel,** a parameter of type **IShareService** in the class constructor, so that you can use it the command that will be invoked when the user will press the button to share the image. Here is how our updated **DetailPageViewModel** looks like:
         
-```public class DetailPageViewModel : BindableBase, INavigationAware
+```csharp
+public class DetailPageViewModel : BindableBase, INavigationAware
 {
     private readonly IShareService _shareService;
     private SerieFollowersVM _selectedShow;
