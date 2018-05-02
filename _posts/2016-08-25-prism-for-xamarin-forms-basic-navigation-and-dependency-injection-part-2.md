@@ -20,7 +20,7 @@ As we’ve mentioned in the previous post, we’re going to create a simple clie
 
 For example, if you want to know which are the top series at the moment, you can just perform a HTTP GET request to the following URL: [https://api.trackseries.tv/v1/Stats/TopSeries](https://api.trackseries.tv/v1/Stats/TopSeries "https://api.trackseries.tv/v1/Stats/TopSeries") The service will return you a JSON response with all the details about the top series:
 
-<pre class="brush: js;">[
+```[
    {
       "id":121361,
       "name":"Game of Thrones",
@@ -452,13 +452,14 @@ For example, if you want to know which are the top series at the moment, you can
       "slugName":"gotham"
    }
 ]
-</pre>
+```
 
 To use these APIs in the application, I’ve created a class called **TsApiService** with a set of methods that, by using the **HttpClient** class of the .NET Framework and the popular JSON.NET library, takes care of downloading the JSON, parsing it and returning a set of objects that can be easily manipulated using C#. To structure my solution in a better way, I’ve decided to place all the classes related to the communication with the REST APIs (like services and entities) in another Portable Class Library, called **InfoSeries.Core**, which is a different PCL than the one that hosts the real Xamarin Forms app.
 
 Here is, for example, how the method that takes care of parsing the previous JSON and to return a list of C# objects looks like:
 
-<pre class="brush: csharp;">public async Task&lt;List&lt;SerieFollowersVM&gt;&gt; GetStatsTopSeries()
+```csharp
+public async Task<List<SerieFollowersVM>> GetStatsTopSeries()
 {
     using (HttpClient client = new HttpClient())
     {
@@ -467,11 +468,11 @@ Here is, for example, how the method that takes care of parsing the previous JSO
             var response = await client.GetAsync("https://api.trackseries.tv/v1/Stats/TopSeries");
             if (!response.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsAsync&lt;TrackSeriesApiError&gt;();
+                var error = await response.Content.ReadAsAsync<TrackSeriesApiError>();
                 var message = error != null ? error.Message : "";
                 throw new TrackSeriesApiException(message, response.StatusCode);
             }
-            return await response.Content.ReadAsAsync&lt;List&lt;SerieFollowersVM&gt;&gt;();
+            return await response.Content.ReadAsAsync<List<SerieFollowersVM>>();
         }
         catch (HttpRequestException ex)
         {
@@ -483,11 +484,12 @@ Here is, for example, how the method that takes care of parsing the previous JSO
         }
     }
 }
-</pre>
+```
 
 The **GetAsync()** method of the **HttpClient** class performs a GET request to the URL, returning as result the string containing the JSON response. This result is stored into the **Content** property ****of the response: in case the request is successful (we use the **IsSuccessStatusCode** property to check this condition), we use the **ReadAsAsync<T>** method exposed by the **Content** property to automatically convert the JSON result in a collection of **SerieFollowersVM** object. **SerieFollowersVM** is nothing else than a class that maps each property of the JSON response (like **name**, **country** or **runtime**) into a C# property:
 
-<pre class="brush: csharp;">public class SerieFollowersVM
+```csharp
+public class SerieFollowersVM
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -505,12 +507,12 @@ The **GetAsync()** method of the **HttpClient** class performs a GET request to 
     public int TvdbId { get; set; }
     public string Language { get; set; }
     public ImagesSerieVM Images { get; set; }
-    public ICollection&lt;GenreVM&gt; Genres { get; set; }
+    public ICollection<GenreVM> Genres { get; set; }
     public DateTime Added { get; set; }
     public DateTime LastUpdated { get; set; }
     public string SlugName { get; set; }
 }
-</pre>
+```
 
 In the full sample on <a href="https://github.com/qmatteoq/XamarinForms-Prism" target="_blank">GitHub</a> you’ll find many classes like this (which maps the various JSON responses returned by the TrackSeries APIs). Additionally, the **TsApiService** will implement additional methods, one for each API we want to leverage in our application. I won’t explain in details each method, since it would be out of scope for the article: you can see all the details on GitHub. For the purpose of this post, you just need to know that the service simply exposes a set of methods that we can use in the various ViewModels to retrieve info about the available TV Shows.
 
@@ -518,28 +520,31 @@ In the full sample on <a href="https://github.com/qmatteoq/XamarinForms-Prism" t
 
 To properly leverage <a href="http://blog.qmatteoq.com/the-mvvm-pattern-dependency-injection/" target="_blank">dependency injection</a>, however, we need an interface that describes the operations offered by the **TsApiService** class. Here is how our interface looks like:
 
-<pre class="brush: csharp;">public interface ITsApiService
+```csharp
+public interface ITsApiService
 {
-    Task&lt;List&lt;SerieFollowersVM&gt;&gt; GetStatsTopSeries();
-    Task&lt;SerieVM&gt; GetSerieByIdAll(int id);
-    Task&lt;SerieInfoVM&gt; GetSerieById(int id);
-    Task&lt;List&lt;SerieSearch&gt;&gt; GetSeriesSearch(string name);
-    Task&lt;SerieFollowersVM&gt; GetStatsSerieHighlighted();
+    Task<List<SerieFollowersVM>> GetStatsTopSeries();
+    Task<SerieVM> GetSerieByIdAll(int id);
+    Task<SerieInfoVM> GetSerieById(int id);
+    Task<List<SerieSearch>> GetSeriesSearch(string name);
+    Task<SerieFollowersVM> GetStatsSerieHighlighted();
 }
-</pre>
+```
 
 Now that we have a service, we can learn how, thanks to Prism, we can register it into its dependency container and have it automatically injected in our ViewModels. Actually, from this point of view, there’s nothing special to highlight: the approach is the same we would use with any other MVVM framework which leverages a dependency injection approach. First, we need to register the association between the interface and the implementation we want to use in the container. In case of Prism, we need to do it in the **RegisterTypes()** method of the **App** class, by using the **Container** object and the **RegisterType<T, Y**>**()** method (where **T** is the interface and **Y** is the concrete implementation):
 
-<pre class="brush: csharp;">protected override void RegisterTypes()
+```csharp
+protected override void RegisterTypes()
 {
-    Container.RegisterTypeForNavigation&lt;MainPage&gt;();
-    Container.RegisterType&lt;ITsApiService, TsApiService&gt;();
+    Container.RegisterTypeForNavigation<MainPage>();
+    Container.RegisterType<ITsApiService, TsApiService>();
 }
-</pre>
+```
 
 Now, since both the **MainPage** and the **TsApiService** are registered in the container, we can get access to it in our ViewModel, by simply adding a parameter in the public constructor, like in the following sample:
 
-<pre class="brush: csharp;">public class MainPageViewModel : BindableBase
+```csharp
+public class MainPageViewModel : BindableBase
 {
     private readonly ITsApiService _apiService;
 
@@ -548,7 +553,7 @@ Now, since both the **MainPage** and the **TsApiService** are registered in the 
         _apiService = apiService;
     }
 }
-</pre>
+```
 
 When the **MainPageViewModel** class will be loaded, the implementation of the **ITsApiService** we’ve registered in the container (in our case, the **TsApiService** class) will be automatically injected into the parameter in the constructor, allowing us to use it in all the other methods and properties we’re going to create in the ViewModel. With this approach, it will be easy for us to change the implementation of the service in case we need it: it will be enough to change the registered type in the **App** class and, automatically, every ViewModel will start to use the new version.
 
@@ -558,12 +563,13 @@ Now that we have a service that offers a method to retrieve the list of the top 
 
 To solve this problem, Prism offers an interface that we can implement in our ViewModels called **INavigationAware**: when we implement it, we have access to the **OnNavigatedTo()** and **OnNavigatedFrom()** events, which we can use to perform data loading or cleanup operations. Here is our **MainPageViewModel** looks like after implementing this interface:
 
-<pre class="brush: csharp;">public class MainPageViewModel : BindableBase, INavigationAware
+```csharp
+public class MainPageViewModel : BindableBase, INavigationAware
 {
     private readonly TsApiService _apiService;
-    private ObservableCollection&lt;SerieFollowersVM&gt; _topSeries;
+    private ObservableCollection<SerieFollowersVM> _topSeries;
 
-    public ObservableCollection&lt;SerieFollowersVM&gt; TopSeries
+    public ObservableCollection<SerieFollowersVM> TopSeries
     {
         get { return _topSeries; }
         set { SetProperty(ref _topSeries, value); }
@@ -582,68 +588,69 @@ To solve this problem, Prism offers an interface that we can implement in our Vi
     public async void OnNavigatedTo(NavigationParameters parameters)
     {
         var result = await _apiService.GetStatsTopSeries();
-        TopSeries = new ObservableCollection&lt;SerieFollowersVM&gt;(result);
+        TopSeries = new ObservableCollection<SerieFollowersVM>(result);
     }
 }
-</pre>
+```
 
 As you can see, now we have implemented a method called **OnNavigatedTo()**, where we can safely execute our asynchronous calls and load the data: we call the **GetStatsTopSeries()** method of the **TsApiService** class and we encapsulate the resulting collection into an **ObservableCollection** property. This is the property we’re going to connect, through binding, to a **ListView** control, in order to display the list of TV Shows in the main page.
 
 For completeness, here is how the XAML of the **MainPage** looks like:
 
-<pre class="brush: xml;">&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="InfoSeries.Views.MainPage"
-             Title="Info Series"&gt;
+             Title="Info Series">
   
-  &lt;ContentPage.Resources&gt;
-    &lt;ResourceDictionary&gt;
-      &lt;DataTemplate x:Key="TopSeriesTemplate"&gt;
-        &lt;ViewCell&gt;
-          &lt;ViewCell.View&gt;
-            &lt;Grid&gt;
-              &lt;Grid.ColumnDefinitions&gt;
-                &lt;ColumnDefinition Width="1*" /&gt;
-                &lt;ColumnDefinition Width="2*" /&gt;
-              &lt;/Grid.ColumnDefinitions&gt;
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <DataTemplate x:Key="TopSeriesTemplate">
+        <ViewCell>
+          <ViewCell.View>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+              </Grid.ColumnDefinitions>
 
-              &lt;Image Source="{Binding Images.Poster}" Grid.Column="0" x:Name="TopImage" /&gt;
-              &lt;StackLayout Grid.Column="1" Margin="12, 0, 0, 0" VerticalOptions="Start"&gt;
-                &lt;Label Text="{Binding Name}" FontSize="18" TextColor="#58666e" FontAttributes="Bold" /&gt;
-                &lt;StackLayout Orientation="Horizontal"&gt;
-                  &lt;Label Text="Runtime: " FontSize="14" TextColor="#58666e" /&gt;
-                  &lt;Label Text="{Binding Runtime}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" /&gt;
-                &lt;/StackLayout&gt;
-                &lt;StackLayout Orientation="Horizontal"&gt;
-                  &lt;Label Text="Air day: " FontSize="14" TextColor="#58666e" /&gt;
-                  &lt;Label Text="{Binding AirDay}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" /&gt;
-                &lt;/StackLayout&gt;
-                &lt;StackLayout Orientation="Horizontal"&gt;
-                  &lt;Label Text="Country: " FontSize="14" TextColor="#58666e" /&gt;
-                  &lt;Label Text="{Binding Country}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" /&gt;
-                &lt;/StackLayout&gt;
-                &lt;StackLayout Orientation="Horizontal"&gt;
-                  &lt;Label Text="Network: " FontSize="14" TextColor="#58666e" /&gt;
-                  &lt;Label Text="{Binding Network}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" /&gt;
-                &lt;/StackLayout&gt;
-              &lt;/StackLayout&gt;
-            &lt;/Grid&gt;
-          &lt;/ViewCell.View&gt;
-        &lt;/ViewCell&gt;
+              <Image Source="{Binding Images.Poster}" Grid.Column="0" x:Name="TopImage" />
+              <StackLayout Grid.Column="1" Margin="12, 0, 0, 0" VerticalOptions="Start">
+                <Label Text="{Binding Name}" FontSize="18" TextColor="#58666e" FontAttributes="Bold" />
+                <StackLayout Orientation="Horizontal">
+                  <Label Text="Runtime: " FontSize="14" TextColor="#58666e" />
+                  <Label Text="{Binding Runtime}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                  <Label Text="Air day: " FontSize="14" TextColor="#58666e" />
+                  <Label Text="{Binding AirDay}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                  <Label Text="Country: " FontSize="14" TextColor="#58666e" />
+                  <Label Text="{Binding Country}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal">
+                  <Label Text="Network: " FontSize="14" TextColor="#58666e" />
+                  <Label Text="{Binding Network}" FontSize="14" TextColor="#98a6ad" Margin="5, 0, 0, 0" />
+                </StackLayout>
+              </StackLayout>
+            </Grid>
+          </ViewCell.View>
+        </ViewCell>
 
 
-      &lt;/DataTemplate&gt;
-    &lt;/ResourceDictionary&gt;
-  &lt;/ContentPage.Resources&gt;
+      </DataTemplate>
+    </ResourceDictionary>
+  </ContentPage.Resources>
 
-  &lt;ListView ItemTemplate="{StaticResource TopSeriesTemplate}"
-            ItemsSource="{Binding Path=TopSeries}" RowHeight="200"/&gt;
+  <ListView ItemTemplate="{StaticResource TopSeriesTemplate}"
+            ItemsSource="{Binding Path=TopSeries}" RowHeight="200"/>
   
-&lt;/ContentPage&gt;
-</pre>
+</ContentPage>
+```
 
 If you already know Xamarin Forms (or XAML in general), you should find this code easy to understand: the page contains a **ListView** control, with a template that describes how a single TV show looks like. We display the show’s poster, along with some other info like the title, the runtime, the production country, etc. Since, due to the naming convention, the **MainPageViewModel** class is already set as **BindingContext** of the page, we can simply connect them by binding the **ItemsSource** property of the **ListView** with the **TopSeries** collection we’ve previously populated in the ViewModel.
 
@@ -655,54 +662,58 @@ Prism support this feature thanks to a class called **NavigationParameters**, wh
 
 The first step is to add both a new page in the **Views** folder (called **DetailPage.xaml**) and a new class in the **ViewModels** folder (called **DetailPageViewModel.cs**). You need to remember also that every page needs to be registered in the container in the **App** class, inside the **OnRegisterTypes()** method:
 
-<pre class="brush: csharp;">protected override void RegisterTypes()
+```csharp
+protected override void RegisterTypes()
 {
-    Container.RegisterTypeForNavigation&lt;MainPage&gt;();
-    Container.RegisterTypeForNavigation&lt;DetailPage&gt;();
-    Container.RegisterType&lt;ITsApiService, TsApiService&gt;();
+    Container.RegisterTypeForNavigation<MainPage>();
+    Container.RegisterTypeForNavigation<DetailPage>();
+    Container.RegisterType<ITsApiService, TsApiService>();
 }
-</pre>
+```
 
 Due to the naming convention, we don’t have to do anything special: the new page and the new ViewModel are already connected. Now we need to pass the selected item in the **ListView** control to the new page. Let’s see, first, how to handle the selection in the **MainPage.** We’ll get some help by a library created by my dear friend <a href="http://codeworks.it/blog/" target="_blank">Corrado Cavalli</a>, which allows to implement behaviors in a Xamarin Forms app. Among the available behaviors, one of them is called **EventToCommand** and it allows us to connect any event exposed by a control to a command defined in the ViewModel. We’re going to use it to connect the **ItemTapped** event of the **ListView** control (which is triggered when the user taps on an item in the list) to a command we’re going to create in the **MainPageViewModel** to trigger the navigation to the detail page.
 
 You can install the package created by Corrado from NuGet: its name is **Corcav.Behaviors**. To use it, you need to add an additional namespace to the root of the **MainPage**, like in the following sample:
 
-<pre class="brush: xml;">&lt;ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+```xml
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              xmlns:behaviors="clr-namespace:Corcav.Behaviors;assembly=Corcav.Behaviors"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="InfoSeries.Views.MainPage"
-             Title="Info Series"&gt;
+             Title="Info Series">
 
     ...
 
-&lt;/ContentPage&gt;
-</pre>
+</ContentPage>
+```
 
 Then you can apply the behavior to the **ListView** control like you would do in a regular Windows app:
 
-<pre class="brush: xml;">&lt;ListView ItemTemplate="{StaticResource TopSeriesTemplate}"
-          ItemsSource="{Binding Path=TopSeries}" RowHeight="200"&gt;
-  &lt;behaviors:Interaction.Behaviors&gt;
-    &lt;behaviors:BehaviorCollection&gt;
-      &lt;behaviors:EventToCommand EventName="ItemTapped" Command="{Binding GoToDetailPage}" /&gt;
-    &lt;/behaviors:BehaviorCollection&gt;
-  &lt;/behaviors:Interaction.Behaviors&gt;
-&lt;/ListView&gt;
-</pre>
+```xml
+<ListView ItemTemplate="{StaticResource TopSeriesTemplate}"
+          ItemsSource="{Binding Path=TopSeries}" RowHeight="200">
+  <behaviors:Interaction.Behaviors>
+    <behaviors:BehaviorCollection>
+      <behaviors:EventToCommand EventName="ItemTapped" Command="{Binding GoToDetailPage}" />
+    </behaviors:BehaviorCollection>
+  </behaviors:Interaction.Behaviors>
+</ListView>
+```
 
 Thanks to this behavior, we have connected the **ItemTapped** event of the **ListView** control to a command called **GoToDetailPage**, that we’re going to define in the ViewModel. From a framework point of view, Prism doesn’t do anything out of the ordinary to help developers implementing commands: it simply offers a class called **DelegateCommand**, which allows to define the operation to execute when the command is invoked and, optionally, the condition to satisfy to enable the command. If you have some previous experience with MVVM Light, it works exactly in the same way as the **RelayCommand** class. Here is how our command in the **MainPageViewModel** class looks like:
 
-<pre class="brush: csharp;">private DelegateCommand&lt;ItemTappedEventArgs&gt; _goToDetailPage;
+```csharp
+private DelegateCommand<ItemTappedEventArgs> _goToDetailPage;
 
-public DelegateCommand&lt;ItemTappedEventArgs&gt; GoToDetailPage
+public DelegateCommand<ItemTappedEventArgs> GoToDetailPage
 {
     get
     {
         if (_goToDetailPage == null)
         {
-            _goToDetailPage = new DelegateCommand&lt;ItemTappedEventArgs&gt;(async selected =&gt;
+            _goToDetailPage = new DelegateCommand<ItemTappedEventArgs>(async selected =>
             {
                 NavigationParameters param = new NavigationParameters();
                 param.Add("show", selected.Item);
@@ -713,22 +724,24 @@ public DelegateCommand&lt;ItemTappedEventArgs&gt; GoToDetailPage
         return _goToDetailPage;
     }
 }
-</pre>
+```
 
 The command we have created is a parametrized command; in fact, the property type is **DelegateCommand<ItemTappedEventArgs>:** this way, inside the method, we get access to the selected item, which is stored in the **Item** property. The method invoked when the command is triggered shows you how navigation with parameter works: first we create a new **NavigationParameters** object which, in the end, is nothing but a dictionary, where you can store key / value pairs. Consequently, we simply add a new item with, as key, the keyword **show** and, as value, the selected item, which type is **SerieFollowersVM.** This is the only difference compared to the navigation we’ve seen in the **App** class: the rest is the same, which means that we call the **NavigateAsync()** method of the **NavigationService**, passing as parameter the key that identifies the detail page (which is **DetailPage**) and the parameter.
 
 **Important!** In the **App** class we were able to automatically use the **NavigationService** because it inherits from the **PrismApplication** class. If we want to use the **NavigationService** in a ViewModel (like in this case), we need to use the traditional approach based on dependency injection. The **NavigationService** instance is already registered in the Prism container, so we simply have to add an **INavigationService** parameter to the public constructor of the **MainPageViewModel**:
 
-<pre class="brush: csharp;">public MainPageViewModel(TsApiService apiService, INavigationService navigationService)
+```csharp
+public MainPageViewModel(TsApiService apiService, INavigationService navigationService)
 {
     _apiService = apiService;
     _navigationService = navigationService;
 }
-</pre>
+```
 
 Now that we have performed the navigation to the detail page, we need to retrieve the parameter in the **DetailPageViewModel** class. The first step, like we did for the **MainPageViewModel**, is to let it inherit from the **INavigationAware** interface, other than the **BindableBase** class. This way, we have access to the **OnNavigatedTo()** event:
 
-<pre class="brush: csharp;">public class DetailPageViewModel : BindableBase, INavigationAware
+```csharp
+public class DetailPageViewModel : BindableBase, INavigationAware
 {
     private SerieFollowersVM _selectedShow;
 
@@ -753,26 +766,27 @@ Now that we have performed the navigation to the detail page, we need to retriev
         SelectedShow = parameters["show"] as SerieFollowersVM;
     }
 }
-</pre>
+```
 
 The previous code shows you how to handle the parameter we’ve received from the main page: the same **NavigationParamaters** object we’ve passed, in the **MainPageViewModel**, to the **NavigateAsync()** method is now passed as parameter of the **OnNavigatedTo()** method. As such, we can simply retrieve the item we’ve previously stored with the **show** key. In this case, since we are expecting an object which type is **SerieFollowersVM**, we can perform a cast and store it into a property of the ViewModel called **SelectedShow.** Thanks to this property, we can leverage binding to connect the various information of the selected show to the controls in the XAML page. Here is how the **DetailPage.xaml** looks like:
 
-<pre class="brush: xml;">&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+```xml
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="clr-namespace:Prism.Mvvm;assembly=Prism.Forms"
              prism:ViewModelLocator.AutowireViewModel="True"
              Title="{Binding Path=SelectedShow.Name}"
-             x:Class="InfoSeries.Views.DetailPage"&gt;
+             x:Class="InfoSeries.Views.DetailPage">
 
-  &lt;StackLayout&gt;
-    &lt;Image x:Name="InfoPoster"
-           Source="{Binding Path=SelectedShow.Images.Fanart}" Aspect="AspectFill" /&gt;
-    &lt;Label Text="{Binding Path=SelectedShow.Overview}" LineBreakMode="WordWrap" FontSize="13" TextColor="#98a6ad" Margin="15" /&gt;
-  &lt;/StackLayout&gt;
+  <StackLayout>
+    <Image x:Name="InfoPoster"
+           Source="{Binding Path=SelectedShow.Images.Fanart}" Aspect="AspectFill" />
+    <Label Text="{Binding Path=SelectedShow.Overview}" LineBreakMode="WordWrap" FontSize="13" TextColor="#98a6ad" Margin="15" />
+  </StackLayout>
 
-&lt;/ContentPage&gt;
-</pre>
+</ContentPage>
+```
 
 The content is very simple: we display an image of the show (stored in the **SelectedShow.Images.Fanart** property) and a brief description (stored in the **SelectedShow.Overview** property).
 
