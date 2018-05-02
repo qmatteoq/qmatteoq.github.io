@@ -9,9 +9,9 @@ layout: default
 
   <div>&nbsp;</div>
 
-  <ul class="post-list">
-    {% for post in site.posts reversed %}
-      <li>
+  
+  {% for post in paginator.posts reversed %}
+  
 
         {% assign date_format = site.cayman-blog.date_format | default: "%b %-d, %Y" %}
         <span class="post-meta">{{ post.date | date: date_format }}</span>
@@ -22,8 +22,23 @@ layout: default
 
         <span>{{ post.excerpt | markdownify | truncatewords: 30 }}</span>
 
-      </li>
-    {% endfor %}
-  </ul>
+  
+  {% endfor %}
+
+  <!-- Pagination links -->
+<div class="pagination">
+    {% if paginator.previous_page %}
+      <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>
+    {% else %}
+      <span class="previous">Previous</span>
+    {% endif %}
+    <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+    {% if paginator.next_page %}
+      <a href="{{ paginator.next_page_path }}" class="next">Next</a>
+    {% else %}
+      <span class="next ">Next</span>
+    {% endif %}
+  </div>
+  
 
 </div>
