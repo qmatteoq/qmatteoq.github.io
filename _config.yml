@@ -12,10 +12,12 @@ cayman-blog:
 
 theme: # leave it empty
 
-plugins:
+gems:
   - jekyll-paginate
-  
+
 paginate: 5
+paginate_path: "/page:num/"
+
 
 # social
 author: "Matteo Pagani"
