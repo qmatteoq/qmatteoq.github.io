@@ -10,7 +10,7 @@ layout: default
   <div>&nbsp;</div>
 
   
-  {% for post in paginator.posts reversed %}
+  {% for post in site.posts reversed %}
   
 
         {% assign date_format = site.cayman-blog.date_format | default: "%b %-d, %Y" %}
@@ -25,20 +25,20 @@ layout: default
   
   {% endfor %}
 
-  <!-- Pagination links -->
-<div class="pagination">
-    {% if paginator.previous_page %}
-      <a href="{{ paginator.previous_page_path }}" class="previous">Previous</a>
-    {% else %}
-      <span class="previous">Previous</span>
-    {% endif %}
-    <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
-    {% if paginator.next_page %}
-      <a href="{{ paginator.next_page_path }}" class="next">Next</a>
-    {% else %}
-      <span class="next ">Next</span>
-    {% endif %}
-  </div>
+  <div id="post-nav">
+    <div >    
+        {% if page.previous.url %}
+        <a class="prev" href="{{page.previous.url}}">
+            <span>&lt; {{page.previous.title}}</span>
+        </a> 
+        {% endif %} 
+        {% if page.next.url %} 
+        <a class="next" href="{{page.next.url}}">
+            <span>{{page.next.title}} &gt;</span>
+        </a> 
+        {% endif %} 
+    </div>
+</div>
   
 
 </div>
