@@ -20,8 +20,9 @@ Luckily, to make the developer’s life easier, Xamarin has created many plugins
 
 However, not all the scenarios are covered, so it may easily happen that you are required to implement your own plugin. Xamarin Forms includes an infrastructure to handle this requirement in an easy way, based on a class called **DependencyService**. From a high level, here is how it works:
 
-  1. In your PCL you create an interface, which describes the methods you want to use in your shared code (for example, you could create an interface called **IGeolocatorService** which offers a **GetPosition()** method to retrieve the current location of the user). However, since it’s an interface, it describes just the operations you want to perform, without actually implementing them. 
-      * In every platform specific project, you create a class that implement this interface, using the actual APIs provided by the platform. This means that, for example, your Android project will contain an **AndroidGeolocatorService**, which will contain the actual implementation of the **GetPosition()** method using the Android APIs. These classes have to be decorated with a special attribute provided by Xamarin Forms called **Dependency** with, as parameter, a reference to the type of the class itself: </ol> 
+1. In your PCL you create an interface, which describes the methods you want to use in your shared code (for example, you could create an interface called **IGeolocatorService** which offers a **GetPosition()** method to retrieve the current location of the user). However, since it’s an interface, it describes just the operations you want to perform, without actually implementing them. 
+
+2. In every platform specific project, you create a class that implement this interface, using the actual APIs provided by the platform. This means that, for example, your Android project will contain an **AndroidGeolocatorService**, which will contain the actual implementation of the **GetPosition()** method using the Android APIs. These classes have to be decorated with a special attribute provided by Xamarin Forms called **Dependency** with, as parameter, a reference to the type of the class itself: </ol> 
 
 ```csharp
 [assembly: Dependency(typeof(AndroidGeolocatorService))]
