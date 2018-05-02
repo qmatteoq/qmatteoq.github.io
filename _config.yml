@@ -12,6 +12,8 @@ cayman-blog:
 
 theme: # leave it empty
 
+paginate: 5
+
 # social
 author: "Matteo Pagani"
 image: /thumbnail-jumbo.png
