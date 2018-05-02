@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+
 <div>
 
   {{ content }}
@@ -9,9 +10,9 @@ layout: default
 
   <div>&nbsp;</div>
 
-  
-  {% for post in site.posts reversed %}
-  
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
 
         {% assign date_format = site.cayman-blog.date_format | default: "%b %-d, %Y" %}
         <span class="post-meta">{{ post.date | date: date_format }}</span>
@@ -22,23 +23,8 @@ layout: default
 
         <span>{{ post.excerpt | markdownify | truncatewords: 30 }}</span>
 
-  
-  {% endfor %}
-
-  <div id="post-nav">
-    <div >    
-        {% if page.previous.url %}
-        <a class="prev" href="{{page.previous.url}}">
-            <span>&lt; {{page.previous.title}}</span>
-        </a> 
-        {% endif %} 
-        {% if page.next.url %} 
-        <a class="next" href="{{page.next.url}}">
-            <span>{{page.next.title}} &gt;</span>
-        </a> 
-        {% endif %} 
-    </div>
-</div>
-  
+      </li>
+    {% endfor %}
+  </ul>
 
 </div>
